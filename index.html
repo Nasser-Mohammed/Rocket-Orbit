@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rocket Orbit/title>
+  <link rel="icon" type="image/png" href="images/neptune.png" sizes="48x48">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <a href="../../index.html" class="back-button">← Back</a>
+  <div class="wrapper">
+    <h1>Figure-8 Rocket Orbit</h1>
+    <h4>Solutions approximated with Runge-Kutta method</h4>
+    <h2><u>Newton's Law</u></h2>
+    <div>
+        \[
+        \begin{aligned}
+          \ddot{r} = -GM_1\frac{\bold{r}-\bold{r}_1}{|\bold{r} - \bold{r}_1|^3} - GM_2\frac{\bold{r}-\bold{r}_2}{|\bold{r} - \bold{r}_2|^3}
+        \end{aligned}
+        \]
+      </div>
+      <hr>
+      <br>
+      <p style="color: #000000;">
+      Right-click on the canvas and select <b>"Save image as..."</b> to download a snapshot.
+    </p>
+    <br>
+    <div id="mass-controls">
+      <label id="earth-label">Earth Mass:
+        <input type="number" id="earth-mass" value="20" min="1" max="1000" step="1">
+      </label>
+      <label id="neptune-label">Neptune Mass:
+        <input type="number" id="neptune-mass" value="25" min="1" max="1000" step="1">
+      </label>
+      <label id="alien-label">Alien Mass:
+        <input type="number" id="alien-mass" value="18" min="1" max="1000" step="1">
+      </label>
+    </div>
+    <button id = "start-simulation">Click to start simulation</button>
+    <button id = "reset">Reset Simulation</button>
+    </br>
+
+  <br>
+  <br>
+      <label for="speed-slider">Simulation Speed:</label>
+    <input type="range" id="speed-slider" min="1" max="40" value="5">
+    <span id="speed-value">5</span>
+    <br>
+
+
+    <div id="time-display">Month: 1</div>
+    <div class="canvas-container">
+        <canvas id="simCanvas" width="1900" height="1300"></canvas>
+      </div>
+
+      
+    <script src="main.js?v=2"></script>
+</body>
+</html>
