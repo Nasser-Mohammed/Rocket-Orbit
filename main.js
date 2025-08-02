@@ -2,7 +2,7 @@
 // Three-body simulation with simple Euler integration
 
 let ctx;
-let G = 1; // Gravitational constant scaled for visualization
+let G = 5; // Gravitational constant scaled for visualization
 const dt = 0.01;
 let frameCount = 0;
 let simulationTime = 0;
@@ -48,7 +48,7 @@ const rocketSize = 30;
 
 let padding = earthImgWidth + 400;
 
-let state = {x: 350, y: 150, xVelo: 0, yVelo: 0, theta: 0};
+let state = {x: 0, y: 150, xVelo: 0, yVelo: 0, theta: 0};
 
 const a = 1000;         // scale of figure-8
 
@@ -60,6 +60,8 @@ const trajectory = [];
 const rightLoopScale = 0.6; // scale down right loop
 
 const xOffset = 380; // how far right you want to shift
+
+let thrustersOn = false;
 
 for (let i = 0; i <= numPoints; i++) {
   const t = (2 * Math.PI * i) / numPoints;
@@ -74,6 +76,47 @@ for (let i = 0; i <= numPoints; i++) {
 }
 
 
+function closestPoint2Trajectory(){
+  let shortestDist = Number.MAX_VALUE;
+  let point = {};
+  let dist;
+  for(let i = 0; i < trajectory.length; i++){
+    const x = trajectory[i].x;
+    const y = trajectory[i].y;
+    dist = euclideanDistance(state.x, state.y, x, y);
+    if (dist < shortestDist){
+      shortestDist = dist;
+      point.x = x;
+      point.y = y;
+    }
+  }
+  //console.log("closest point: ", point.x, point.y);
+  //console.log("with distance: ", shortestDist);
+  return [dist, point.x, point.y];
+}
+
+
+function controller(){
+
+  const [distance, x, y] = closestPoint2Trajectory();
+
+  if (distance > 200){
+    //initiate thrusters
+    const xDist = x - state.x;
+    const yDist = y - state.y;
+
+    const xAccel = xDist/50000;
+    const yAccel = yDist/50000;
+
+    return [xAccel, yAccel];
+  }
+
+  else{
+    return [0, 0]; // x acceleration, y acceleration
+  }
+  
+
+}
 
 
 function computeAcceleration(x, y) {
@@ -98,6 +141,11 @@ function computeAcceleration(x, y) {
 
   ax += force2 * moonDx;
   ay += force2 * moonDy;
+
+  const [xAccel, yAccel] = controller();
+
+  ax += xAccel;
+  ay += yAccel;
 
   return { ax, ay };
 }
@@ -145,7 +193,7 @@ function updateRocket() {
     state.yVelo += (k1vy + 2 * k2vy + 2 * k3vy + k4vy) / 6;
     state.theta = Math.atan2(state.yVelo, state.xVelo);  // in radians
 
-    //console.log("new position: ", state.x, ", ", state.y);
+    console.log("new position: ", state.x, ", ", state.y);
   }
 }
 
@@ -184,7 +232,7 @@ function animate(){
     }
   }
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 250; i++) {
       updateRocket();
     }
 
@@ -334,6 +382,7 @@ function resetSimulation() {
   state = {x: 350, y: 150, xVelo: 0, yVelo: 0, theta: 0};
   drawPlanets();
   drawRocket();
+  drawTrajectory();
   console.log('rewrote canvas');
   cnt = 0;
   multiplier = 1;
